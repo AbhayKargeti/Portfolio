@@ -1,16 +1,22 @@
 export const profile = {
   name: 'Abhay Kargeti',
-  titles: ['Full-Stack Software Developer', 'Backend Engineer', 'AI Enthusiast'],
+  handle: '@abhaykargeti',
+  avatar: '/avatar.png',
+  title: 'Full-Stack Software Developer',
+  otherTitles: ['Backend Engineer', 'AI Enthusiast'],
   location: 'Faridabad, India',
   intro:
-    'I build scalable web applications, enterprise software, and backend systems with a focus on solving real-world problems. My experience spans Laravel, PHP, Java, Spring Boot, React, TypeScript, and database-driven applications.',
+    'I build scalable web applications, enterprise software, and backend systems with a focus on solving real-world problems.',
+  stack: ['Laravel', 'PHP', 'Java', 'Spring Boot', 'React', 'TypeScript'],
   focus:
     "I'm passionate about software engineering, system design, emerging AI technologies, and building products that combine functionality with thoughtful user experiences.",
   email: 'abhaykargeti1947@gmail.com',
   linkedin: 'https://in.linkedin.com/in/abhaykargeti',
   github: 'https://github.com/AbhayKargeti',
+  githubUser: 'AbhayKargeti',
+  topRepos: ['community-reporter', 'Portfolio'],
   // The resume link is shown on the site as soon as this is filled in.
-  resume: '',
+  resume: 'https://drive.google.com/file/d/1LBR-zxJJaF0j99mNMHlvBzhl05sFCNwJ/view?usp=drivesdk',
 }
 
 export const about = [
@@ -58,6 +64,9 @@ export const experience = [
 export const projects = [
   {
     name: 'HISYNC – Enterprise Asset Management Platform',
+    short: 'HISYNC',
+    tagline: 'Enterprise Asset Management',
+    tone: 'blue',
     kind: 'Professional project',
     summary:
       'A comprehensive enterprise platform designed to manage the complete lifecycle of organizational assets.',
@@ -75,6 +84,9 @@ export const projects = [
   },
   {
     name: 'Community Reporter',
+    short: 'Community Reporter',
+    tagline: 'Report local issues',
+    tone: 'green',
     kind: 'Personal project · In progress',
     summary:
       'A community-driven platform focused on helping citizens report local issues and enabling better communication between communities and responsible authorities.',
@@ -87,14 +99,17 @@ export const projects = [
 export const skills = [
   {
     group: 'Backend',
+    scrolling: true,
     items: ['PHP', 'Laravel', 'Java', 'Spring Boot', 'Hibernate', 'Servlets', 'JSP', 'REST API Development'],
   },
   {
     group: 'Frontend',
+    scrolling: true,
     items: ['React', 'TypeScript', 'JavaScript', 'HTML5', 'CSS3', 'Bootstrap'],
   },
   {
     group: 'Databases & infrastructure',
+    scrolling: true,
     items: ['MySQL', 'Oracle SQL', 'Redis', 'Docker', 'Laravel Sail', 'Git', 'GitHub'],
   },
   {
@@ -129,6 +144,49 @@ export const exploring = [
   'System Design and Scalable Architecture',
   'Advanced Data Structures & Algorithms',
 ]
+
+export const uses = [
+  { name: 'MacBook Air', category: 'Laptop', description: 'My development machine.' },
+  {
+    name: 'Visual Studio Code',
+    category: 'Editor',
+    description: 'The editor I write code in.',
+    link: 'https://code.visualstudio.com',
+  },
+  {
+    name: 'Claude Code',
+    category: 'AI',
+    description: 'AI-assisted development in my editor and terminal.',
+    link: 'https://claude.com/claude-code',
+  },
+  {
+    name: 'GitHub Desktop',
+    category: 'Git',
+    description: 'For managing repositories and branches.',
+    link: 'https://desktop.github.com',
+  },
+  { name: 'Brave', category: 'Browser', description: 'My everyday browser.', link: 'https://brave.com' },
+]
+
+// The Open Source, Blogs, and quote sections appear as soon as these have content.
+export const openSource: {
+  name: string
+  description: string
+  link: string
+  prs: number
+  issues: number
+}[] = []
+
+export const blogs: {
+  title: string
+  date: string
+  readTime: string
+  excerpt: string
+  tags: string[]
+  link: string
+}[] = []
+
+export const quote: { text: string; author: string } | null = null
 
 export const connect =
   "I'm always interested in discussing software engineering, interesting projects, emerging technologies, and opportunities to build something meaningful."
