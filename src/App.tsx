@@ -1,5 +1,5 @@
 import { Fragment, useState } from 'react'
-import type { CSSProperties, ReactNode } from 'react'
+import type { ComponentProps, CSSProperties, ReactNode } from 'react'
 import {
   ArrowUpRight,
   ChevronRight,
@@ -16,7 +16,8 @@ import {
 import { about, blogs, connect, experience, exploring, newTab, openSource, profile, projects, quote, skills } from './content'
 import GitHubActivity from './GitHubActivity'
 import { LinkedInIcon, TechIcon } from './icons'
-import { tilt, useActiveSection, useNavIndicator, useReveal } from './motion'
+import LiquidCanvas from './LiquidCanvas'
+import { magnet, tilt, useActiveSection, useLiquidGlass, useNavIndicator, useReveal } from './motion'
 import ThemeToggle from './ThemeToggle'
 
 const sections = [
@@ -27,6 +28,11 @@ const sections = [
   ['about', 'About'],
   ['contact', 'Contact'],
 ]
+
+function Glass({ className = '', ...props }: ComponentProps<'div'>) {
+  const ref = useLiquidGlass()
+  return <div className={`glass ${className}`} ref={ref} {...props} />
+}
 
 function Chip({ name, icon = true }: { name: string; icon?: boolean }) {
   return (
@@ -97,6 +103,40 @@ function AnimatedName({ name }: { name: string }) {
         </Fragment>
       ))}
     </h1>
+  )
+}
+
+function Headline() {
+  let index = 0
+  const words = (text: string) =>
+    text.split(/(\s+)/).map((token, position) =>
+      token.trim() ? (
+        <span className="word-rise" key={position} style={{ '--i': index++ } as CSSProperties}>
+          {token}
+        </span>
+      ) : (
+        token
+      ),
+    )
+  const parts = profile.intro.split(new RegExp(`(${profile.highlights.join('|')})`))
+
+  return (
+    <p className="headline">
+      <strong>{words(profile.title)}</strong>
+      <span className="sr-only intro-full">{profile.intro}</span>
+      <span className="intro-roll" aria-hidden="true">
+        {words(parts[0])}
+        <span className="roll-slot word-rise" style={{ '--i': index++ } as CSSProperties}>
+          <span className="roll-track">
+            {[...profile.highlights, profile.highlights[0]].map((phrase, position) => (
+              <span key={position}>{phrase}</span>
+            ))}
+          </span>
+        </span>
+        <br />
+        {words(parts[parts.length - 1].trim())}
+      </span>
+    </p>
   )
 }
 
@@ -190,28 +230,49 @@ export default function App() {
 
   return (
     <>
+      <LiquidCanvas className="page-liquid" follow />
       <div className="progress" aria-hidden="true" />
       <a className="skip-link" href="#main">
         Skip to content
       </a>
 
       <header className="topbar">
-        <div className="topbar-inner">
+        <Glass className="topbar-inner">
           <a className="handle" href="#top">
             {profile.handle}
           </a>
           <Nav />
           <ThemeToggle />
-        </div>
+        </Glass>
       </header>
 
       <main id="main">
         <div className="hero" id="top">
-          <div className="identity">
-            <img className="avatar" src={profile.avatar} alt={`Portrait of ${profile.name}`} width="136" height="136" fetchPriority="high" />
-            <div>
-              <AnimatedName name={profile.name} />
-              <p className="other-titles">{profile.otherTitles.join(' · ')}</p>
+          <div className="hero-title">
+            <AnimatedName name={profile.name} />
+            <div className="avatar-wrap">
+              <img className="avatar" src={profile.avatar} alt={`Portrait of ${profile.name}`} width="136" height="136" fetchPriority="high" />
+              <svg className="avatar-ring" viewBox="0 0 100 100" aria-hidden="true">
+                <circle cx="50" cy="50" r="49.5" pathLength="100" />
+              </svg>
+            </div>
+          </div>
+
+          <div className="hero-bottom">
+            <div className="hero-story">
+              <Headline />
+              <div className="actions" {...magnet}>
+                <a className="button primary" href="#contact">
+                  Get in Touch
+                  <ChevronRight size={16} aria-hidden="true" />
+                </a>
+                {profile.resume && (
+                  <a className="button" href={profile.resume} {...newTab}>
+                    Resume
+                    <FileText size={16} aria-hidden="true" />
+                  </a>
+                )}
+              </div>
               <ul className="socials">
                 <li>
                   <a href={profile.github} aria-label="GitHub" title="GitHub" {...newTab}>
@@ -230,33 +291,21 @@ export default function App() {
                 </li>
               </ul>
             </div>
-          </div>
 
-          <p className="headline">
-            <strong>{profile.title}</strong> – {profile.intro}
-          </p>
-
-          <p className="stack-line">
-            My experience spans
-            {profile.stack.map((item) => (
-              <Chip key={item} name={item} />
-            ))}
-            and database-driven applications.
-          </p>
-
-          <p className="focus">{profile.focus}</p>
-
-          <div className="actions">
-            <a className="button primary" href="#contact">
-              Get in Touch
-              <ChevronRight size={16} aria-hidden="true" />
-            </a>
-            {profile.resume && (
-              <a className="button" href={profile.resume} {...newTab}>
-                Resume
-                <FileText size={16} aria-hidden="true" />
-              </a>
-            )}
+            <Glass className="hero-panel">
+              <p className="stack-line">
+                My experience spans{' '}
+                {profile.stack.map((item, index) => (
+                  <Fragment key={item}>
+                    <span className="stack-chip" style={{ '--i': index } as CSSProperties}>
+                      <Chip name={item} />
+                    </span>{' '}
+                  </Fragment>
+                ))}
+                and database-driven applications.
+              </p>
+              <p className="focus">{profile.focus}</p>
+            </Glass>
           </div>
         </div>
 
@@ -267,6 +316,7 @@ export default function App() {
             {projects.map((project) => (
               <article className="project-card" key={project.name} {...tilt}>
                 <div className={`project-visual ${project.tone}`} aria-hidden="true">
+                  <LiquidCanvas className="panel-liquid" />
                   <strong>{project.short}</strong>
                   <span>{project.tagline}</span>
                 </div>
@@ -384,7 +434,9 @@ export default function App() {
         )}
 
         <Section id="activity" title="GitHub Activity">
-          <GitHubActivity />
+          <Glass className="activity-glass">
+            <GitHubActivity />
+          </Glass>
         </Section>
 
         <Section id="about" title="About">
@@ -393,14 +445,23 @@ export default function App() {
               <p key={paragraph}>{paragraph}</p>
             ))}
           </div>
-          <ChipGroup label="Currently Exploring" items={exploring} plain />
+          <div className="explore">
+            <h3>Currently Exploring</h3>
+            <Glass className="explore-lens">
+              <ul className="explore-list">
+                {exploring.map((topic) => (
+                  <li key={topic}>{topic}</li>
+                ))}
+              </ul>
+            </Glass>
+          </div>
         </Section>
 
         <Section id="contact" title="Let’s Connect">
           <div className="prose">
             <p>{connect}</p>
           </div>
-          <div className="actions contact-actions">
+          <Glass className="actions contact-actions" {...magnet}>
             <a className="button primary" href={`mailto:${profile.email}`}>
               <Mail size={16} aria-hidden="true" />
               {profile.email}
@@ -420,7 +481,7 @@ export default function App() {
                 Resume
               </a>
             )}
-          </div>
+          </Glass>
         </Section>
 
         {quote && (

@@ -4,10 +4,10 @@ export const profile = {
   name: 'Abhay Kargeti',
   handle: '@abhaykargeti',
   avatar: '/avatar.jpg',
-  title: 'Full-Stack Software Developer',
-  otherTitles: ['Fullstack AI Engineer'],
+  title: 'Fullstack AI Engineer',
   intro:
     'I build scalable web applications, enterprise software, and backend systems with a focus on solving real-world problems.',
+  highlights: ['scalable web applications', 'enterprise software', 'backend systems'],
   stack: ['Laravel', 'PHP', 'Java', 'Spring Boot', 'React', 'TypeScript'],
   focus:
     "I’m passionate about software engineering, system design, emerging AI technologies, and building products that combine functionality with thoughtful user experiences.",
