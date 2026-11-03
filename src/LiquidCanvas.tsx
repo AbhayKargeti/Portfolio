@@ -90,7 +90,7 @@ export default function LiquidCanvas({ className, follow = false }: { className:
     const uniform = (name: string) => gl.getUniformLocation(program, name)
     const still = matchMedia('(prefers-reduced-motion: reduce)').matches
     const pointer = { x: -1, y: -1, currentX: 0.5, currentY: 0.5, pull: 0 }
-    const scene = { hue: 0, sat: 0, val: 0 }
+    const scene = { hue: 0, sat: 0, val: 0, drift: 0 }
     const target = { hue: 0, sat: 0, val: 0 }
     let source: Element = canvas
     let first = true
@@ -127,7 +127,8 @@ export default function LiquidCanvas({ className, follow = false }: { className:
       gl.uniform2f(uniform('uPointer'), pointer.currentX, pointer.currentY)
       gl.uniform1f(uniform('uPull'), pointer.pull)
       gl.uniform1f(uniform('uTime'), still ? 14 : now / 1000)
-      gl.uniform1f(uniform('uDrift'), follow ? (scrollY / innerHeight) * 0.22 : 0)
+      if (follow) scene.drift += ((scrollY / innerHeight) * 0.22 - scene.drift) * (still ? 1 : 0.07)
+      gl.uniform1f(uniform('uDrift'), scene.drift)
       gl.uniform1f(uniform('uHue'), scene.hue)
       gl.uniform1f(uniform('uSat'), scene.sat)
       gl.uniform1f(uniform('uVal'), scene.val)

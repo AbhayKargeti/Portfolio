@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from 'react'
-import type { CSSProperties } from 'react'
 import { newTab, profile } from './content'
 
 type Day = { date: string; count: number; level: number }
@@ -43,11 +42,10 @@ function Heatmap({ days, total }: Activity) {
           {Array.from({ length: leading }, (_, index) => (
             <span key={index} />
           ))}
-          {days.map((day, index) => (
+          {days.map((day) => (
             <span
               key={day.date}
               className={`day level-${day.level}`}
-              style={{ '--week': Math.floor((index + leading) / 7) } as CSSProperties}
               title={`${dayFormat.format(parseDate(day.date))}: ${day.count} ${day.count === 1 ? 'contribution' : 'contributions'}`}
             />
           ))}

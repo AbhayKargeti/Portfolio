@@ -1,8 +1,7 @@
 import { useEffect, useId, useLayoutEffect, useRef, useState } from 'react'
 import type { PointerEvent } from 'react'
 
-const revealTargets =
-  '.hero-panel, .hero .actions, .hero .socials, .section-head, .marquees, .chip-group > h3, .chip-group > p, .chips > li, .prose, .project-card, .timeline > li, .open-source > li, .blog-card, .activity-card, .contact-actions, .explore'
+const revealTargets = '.hero-panel, .hero .actions, .hero .socials'
 
 export function useReveal() {
   useLayoutEffect(() => {
@@ -166,4 +165,132 @@ export function useLiquidGlass() {
     }
   }, [id])
   return ref
+}
+
+type Letter = { el: HTMLElement; x: number; y: number; extra: number; line: number; f: number }
+type TypeRoot = { letters: Letter[]; base: number; radius: number }
+
+const peakWeight = 800
+
+function measureType(root: HTMLElement): TypeRoot {
+  const styles = getComputedStyle(root)
+  const base = parseFloat(styles.fontWeight)
+  const size = parseFloat(styles.fontSize)
+  const els = [...root.querySelectorAll<HTMLElement>('.letter')]
+  const rest = els.map((el) => parseFloat(getComputedStyle(el).width))
+  els.forEach((el) => (el.style.fontWeight = `${peakWeight}`))
+  const peak = els.map((el) => parseFloat(getComputedStyle(el).width))
+  els.forEach((el, index) => {
+    el.style.removeProperty('font-weight')
+    el.style.width = `${rest[index]}px`
+  })
+  const box = root.getBoundingClientRect()
+  const tops: number[] = []
+  const letters = els.map((el, index) => {
+    const rect = el.getBoundingClientRect()
+    let line = tops.findIndex((top) => Math.abs(top - rect.top) < size / 2)
+    if (line < 0) line = tops.push(rect.top) - 1
+    return { el, x: rect.left + rect.width / 2 - box.left, y: rect.top + rect.height / 2 - box.top, extra: (peak[index] - rest[index]) * 1.2, line, f: 0 }
+  })
+  return { letters, base, radius: Math.max(size * 0.62, 34) }
+}
+
+export function useHoverType() {
+  useEffect(() => {
+    if (!matchMedia('(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)').matches) return
+    const measured = new Map<HTMLElement, TypeRoot>()
+    const live = new Set<HTMLElement>()
+    const pointer = { x: 0, y: 0, vx: 0, speed: 0 }
+    let over: HTMLElement | null = null
+    let frame = 0
+
+    const clear = ({ letters }: TypeRoot) => {
+      for (const letter of letters) {
+        letter.f = 0
+        letter.el.style.removeProperty('transform')
+        letter.el.style.removeProperty('font-weight')
+      }
+    }
+    const reset = () => {
+      measured.forEach((entry) => {
+        clear(entry)
+        entry.letters.forEach(({ el }) => el.style.removeProperty('width'))
+      })
+      measured.clear()
+      live.clear()
+      over = null
+    }
+    const tick = (now: number) => {
+      pointer.speed *= 0.9
+      pointer.vx *= 0.88
+      const boxes = [...live].map((root) => [root, root.getBoundingClientRect()] as const)
+      for (const [root, box] of boxes) {
+        const entry = measured.get(root)
+        if (!entry) continue
+        const sigma = 2 * entry.radius * entry.radius
+        let moving = false
+        const shift = new Map<number, number>()
+        const totals = new Map<number, number>()
+        for (const letter of entry.letters) {
+          const dx = pointer.x - box.left - letter.x
+          const dy = pointer.y - box.top - letter.y
+          const target = root === over ? Math.exp(-(dx * dx + dy * dy) / sigma) : 0
+          letter.f += (target - letter.f) * 0.16
+          if (letter.f < 0.004 && target < 0.004) letter.f = 0
+          else moving = true
+          totals.set(letter.line, (totals.get(letter.line) ?? 0) + letter.extra * letter.f)
+        }
+        if (!moving) {
+          clear(entry)
+          live.delete(root)
+          continue
+        }
+        const energy = Math.min(pointer.speed / 28, 1)
+        const skew = Math.max(-11, Math.min(11, pointer.vx * 0.5))
+        const wave = entry.radius * 0.1
+        entry.letters.forEach((letter, index) => {
+          const { el, f, extra, line } = letter
+          const before = shift.get(line) ?? 0
+          shift.set(line, before + extra * f)
+          if (!f) {
+            el.style.removeProperty('transform')
+            el.style.removeProperty('font-weight')
+            if (!before && !totals.get(line)) return
+          }
+          const x = before + (extra * f) / 2 - (totals.get(line) ?? 0) / 2
+          const y = -f * wave * (0.6 + energy) + Math.sin(now / 150 + index * 0.75) * f * wave * energy
+          el.style.transform = `translate(${x.toFixed(2)}px, ${y.toFixed(2)}px) skewX(${(-skew * f).toFixed(2)}deg) scale(${(1 + f * 0.035).toFixed(3)})`
+          if (f) el.style.fontWeight = `${Math.round(entry.base + (peakWeight - entry.base) * f)}`
+        })
+      }
+      frame = live.size ? requestAnimationFrame(tick) : 0
+    }
+    const move = ({ target, clientX, clientY }: globalThis.PointerEvent) => {
+      const dx = clientX - pointer.x
+      pointer.speed = Math.min(pointer.speed + Math.hypot(dx, clientY - pointer.y) * 0.5, 60)
+      pointer.vx = Math.max(-40, Math.min(40, pointer.vx * 0.6 + dx * 0.4))
+      pointer.x = clientX
+      pointer.y = clientY
+      over = (target as Element).closest?.<HTMLElement>('[data-hover-type]') ?? null
+      if (!over) return
+      if (!measured.has(over)) measured.set(over, measureType(over))
+      live.add(over)
+      if (!frame) frame = requestAnimationFrame(tick)
+    }
+    const leave = () => {
+      over = null
+    }
+
+    document.fonts.ready.then(reset)
+    addEventListener('resize', reset)
+    addEventListener('pointermove', move, { passive: true })
+    document.documentElement.addEventListener('pointerleave', leave)
+    return () => {
+      cancelAnimationFrame(frame)
+      removeEventListener('resize', reset)
+      removeEventListener('pointermove', move)
+      document.documentElement.removeEventListener('pointerleave', leave)
+      reset()
+    }
+  }, [])
 }

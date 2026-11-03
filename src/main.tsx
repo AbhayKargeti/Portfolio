@@ -1,7 +1,7 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import '@fontsource-variable/hanken-grotesk'
-import '@fontsource/instrument-serif/400.css'
+import '@fontsource-variable/newsreader/standard.css'
 import './styles.css'
 import App from './App'
 

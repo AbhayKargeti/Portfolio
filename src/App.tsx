@@ -17,7 +17,7 @@ import { about, blogs, connect, experience, exploring, newTab, openSource, profi
 import GitHubActivity from './GitHubActivity'
 import { LinkedInIcon, TechIcon } from './icons'
 import LiquidCanvas from './LiquidCanvas'
-import { magnet, tilt, useActiveSection, useLiquidGlass, useNavIndicator, useReveal } from './motion'
+import { magnet, tilt, useActiveSection, useLiquidGlass, useHoverType, useNavIndicator, useReveal } from './motion'
 import ThemeToggle from './ThemeToggle'
 
 const sections = [
@@ -34,6 +34,34 @@ function Glass({ className = '', ...props }: ComponentProps<'div'>) {
   return <div className={`glass ${className}`} ref={ref} {...props} />
 }
 
+function Wave({ children }: { children: string }) {
+  return (
+    <span className="wave">
+      <span className="sr-only">{children}</span>
+      <span aria-hidden="true">
+        {[...children].map((letter, index) => (
+          <span key={index} style={{ '--i': index } as CSSProperties}>
+            {letter}
+          </span>
+        ))}
+      </span>
+    </span>
+  )
+}
+
+function Statement({ text }: { text: string }) {
+  const words = text.split(' ')
+  return (
+    <p className="statement">
+      {words.map((word, index) => (
+        <Fragment key={index}>
+          <span style={{ '--p': index / words.length } as CSSProperties}>{word}</span>{' '}
+        </Fragment>
+      ))}
+    </p>
+  )
+}
+
 function Chip({ name, icon = true }: { name: string; icon?: boolean }) {
   return (
     <span className="chip">
@@ -47,7 +75,9 @@ function Section({ id, title, action, children }: { id: string; title: string; a
   return (
     <section className="section" id={id} aria-labelledby={`${id}-heading`}>
       <div className="section-head">
-        <h2 id={`${id}-heading`}>{title}</h2>
+        <h2 id={`${id}-heading`}>
+          <HoverType text={title} />
+        </h2>
         {action}
       </div>
       {children}
@@ -80,29 +110,32 @@ function Nav() {
     <nav aria-label="Sections" ref={nav}>
       {sections.map(([id, label]) => (
         <a key={id} href={`#${id}`} aria-current={active === id ? 'true' : undefined}>
-          {label}
+          <Wave>{label}</Wave>
         </a>
       ))}
     </nav>
   )
 }
 
-function AnimatedName({ name }: { name: string }) {
+function HoverType({ text }: { text: string }) {
   let index = 0
   return (
-    <h1 aria-label={name}>
-      {name.split(' ').map((word) => (
-        <Fragment key={word}>
-          <span className="word" aria-hidden="true">
-            {[...word].map((letter, position) => (
-              <span className="letter" key={position} style={{ '--i': index++ } as CSSProperties}>
-                {letter}
-              </span>
-            ))}
-          </span>{' '}
-        </Fragment>
-      ))}
-    </h1>
+    <span data-hover-type>
+      <span className="sr-only">{text}</span>
+      <span aria-hidden="true">
+        {text.split(' ').map((word, position) => (
+          <Fragment key={position}>
+            <span className="word">
+              {[...word].map((letter, at) => (
+                <span className="letter" key={at} style={{ '--i': index++ } as CSSProperties}>
+                  {letter}
+                </span>
+              ))}
+            </span>{' '}
+          </Fragment>
+        ))}
+      </span>
+    </span>
   )
 }
 
@@ -227,6 +260,7 @@ function Technologies() {
 
 export default function App() {
   useReveal()
+  useHoverType()
 
   return (
     <>
@@ -239,7 +273,7 @@ export default function App() {
       <header className="topbar">
         <Glass className="topbar-inner">
           <a className="handle" href="#top">
-            {profile.handle}
+            <Wave>{profile.handle}</Wave>
           </a>
           <Nav />
           <ThemeToggle />
@@ -249,7 +283,9 @@ export default function App() {
       <main id="main">
         <div className="hero" id="top">
           <div className="hero-title">
-            <AnimatedName name={profile.name} />
+            <h1>
+              <HoverType text={profile.name} />
+            </h1>
             <div className="avatar-wrap">
               <img className="avatar" src={profile.avatar} alt={`Portrait of ${profile.name}`} width="136" height="136" fetchPriority="high" />
               <svg className="avatar-ring" viewBox="0 0 100 100" aria-hidden="true">
@@ -263,12 +299,12 @@ export default function App() {
               <Headline />
               <div className="actions" {...magnet}>
                 <a className="button primary" href="#contact">
-                  Get in Touch
+                  <Wave>Get in Touch</Wave>
                   <ChevronRight size={16} aria-hidden="true" />
                 </a>
                 {profile.resume && (
                   <a className="button" href={profile.resume} {...newTab}>
-                    Resume
+                    <Wave>Resume</Wave>
                     <FileText size={16} aria-hidden="true" />
                   </a>
                 )}
@@ -292,20 +328,19 @@ export default function App() {
               </ul>
             </div>
 
-            <Glass className="hero-panel">
-              <p className="stack-line">
-                My experience spans{' '}
+            <div className="hero-panel">
+              <p className="stack-label">My experience spans</p>
+              <ul className="stack-list">
                 {profile.stack.map((item, index) => (
-                  <Fragment key={item}>
-                    <span className="stack-chip" style={{ '--i': index } as CSSProperties}>
-                      <Chip name={item} />
-                    </span>{' '}
-                  </Fragment>
+                  <li key={item} style={{ '--i': index } as CSSProperties}>
+                    <TechIcon name={item} size={18} />
+                    <HoverType text={item} />
+                  </li>
                 ))}
-                and database-driven applications.
-              </p>
+              </ul>
+              <p className="stack-more">and database-driven applications.</p>
               <p className="focus">{profile.focus}</p>
-            </Glass>
+            </div>
           </div>
         </div>
 
@@ -317,11 +352,15 @@ export default function App() {
               <article className="project-card" key={project.name} {...tilt}>
                 <div className={`project-visual ${project.tone}`} aria-hidden="true">
                   <LiquidCanvas className="panel-liquid" />
-                  <strong>{project.short}</strong>
+                  <strong>
+                    <HoverType text={project.short} />
+                  </strong>
                   <span>{project.tagline}</span>
                 </div>
                 <div className="project-body">
-                  <h3>{project.name}</h3>
+                  <h3>
+                    <HoverType text={project.name} />
+                  </h3>
                   <p>{project.summary}</p>
                   {project.areas.length > 0 && (
                     <ul className="areas">
@@ -358,7 +397,9 @@ export default function App() {
             {experience.map((job) => (
               <li key={job.company}>
                 <div className="timeline-head">
-                  <h3>{job.company}</h3>
+                  <h3>
+                    <HoverType text={job.company} />
+                  </h3>
                   <span>{job.period}</span>
                 </div>
                 <p className="role">{job.role}</p>
@@ -441,9 +482,9 @@ export default function App() {
 
         <Section id="about" title="About">
           <div className="prose">
-            {about.map((paragraph) => (
-              <p key={paragraph}>{paragraph}</p>
-            ))}
+            {about.map((paragraph, index) =>
+              index === 0 ? <Statement key={paragraph} text={paragraph} /> : <p key={paragraph}>{paragraph}</p>,
+            )}
           </div>
           <div className="explore">
             <h3>Currently Exploring</h3>
@@ -469,16 +510,16 @@ export default function App() {
             <CopyEmail />
             <a className="button" href={profile.linkedin} {...newTab}>
               <LinkedInIcon size={16} />
-              LinkedIn
+              <Wave>LinkedIn</Wave>
             </a>
             <a className="button" href={profile.github} {...newTab}>
               <TechIcon name="GitHub" />
-              GitHub
+              <Wave>GitHub</Wave>
             </a>
             {profile.resume && (
               <a className="button" href={profile.resume} {...newTab}>
                 <FileText size={16} aria-hidden="true" />
-                Resume
+                <Wave>Resume</Wave>
               </a>
             )}
           </Glass>
