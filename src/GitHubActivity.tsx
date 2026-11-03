@@ -1,9 +1,11 @@
 import { useEffect, useRef, useState } from 'react'
-import { profile } from './content'
+import type { CSSProperties } from 'react'
+import { newTab, profile } from './content'
 
 type Day = { date: string; count: number; level: number }
 type Activity = { days: Day[]; total: number }
 
+const dayFormat = new Intl.DateTimeFormat('en', { dateStyle: 'medium', timeZone: 'UTC' })
 const url = `https://github-contributions-api.jogruber.de/v4/${profile.githubUser}?y=last`
 
 function parseDate(date: string) {
@@ -41,11 +43,12 @@ function Heatmap({ days, total }: Activity) {
           {Array.from({ length: leading }, (_, index) => (
             <span key={index} />
           ))}
-          {days.map((day) => (
+          {days.map((day, index) => (
             <span
               key={day.date}
               className={`day level-${day.level}`}
-              title={`${day.date}: ${day.count} ${day.count === 1 ? 'contribution' : 'contributions'}`}
+              style={{ '--week': Math.floor((index + leading) / 7) } as CSSProperties}
+              title={`${dayFormat.format(parseDate(day.date))}: ${day.count} ${day.count === 1 ? 'contribution' : 'contributions'}`}
             />
           ))}
         </div>
@@ -88,7 +91,11 @@ export default function GitHubActivity() {
       {!activity && !failed && <p className="activity-status">Loading contributions…</p>}
       {failed && (
         <p className="activity-status">
-          The contribution calendar couldn't load. <a href={profile.github}>See it on GitHub</a>.
+          The contribution calendar couldn’t load.{' '}
+          <a href={profile.github} {...newTab}>
+            See it on GitHub
+          </a>
+          .
         </p>
       )}
       <div className="activity-repos">
@@ -96,7 +103,9 @@ export default function GitHubActivity() {
         <ul>
           {profile.topRepos.map((repo) => (
             <li key={repo}>
-              <a href={`${profile.github}/${repo}`}>{repo}</a>
+              <a href={`${profile.github}/${repo}`} {...newTab}>
+                {repo}
+              </a>
             </li>
           ))}
         </ul>

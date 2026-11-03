@@ -1,15 +1,16 @@
+export const newTab = { target: '_blank', rel: 'noopener noreferrer' }
+
 export const profile = {
   name: 'Abhay Kargeti',
   handle: '@abhaykargeti',
-  avatar: '/avatar.png',
+  avatar: '/avatar.jpg',
   title: 'Full-Stack Software Developer',
-  otherTitles: ['Backend Engineer', 'AI Enthusiast'],
-  location: 'Faridabad, India',
+  otherTitles: ['Fullstack AI Engineer'],
   intro:
     'I build scalable web applications, enterprise software, and backend systems with a focus on solving real-world problems.',
   stack: ['Laravel', 'PHP', 'Java', 'Spring Boot', 'React', 'TypeScript'],
   focus:
-    "I'm passionate about software engineering, system design, emerging AI technologies, and building products that combine functionality with thoughtful user experiences.",
+    "I’m passionate about software engineering, system design, emerging AI technologies, and building products that combine functionality with thoughtful user experiences.",
   email: 'abhaykargeti1947@gmail.com',
   linkedin: 'https://in.linkedin.com/in/abhaykargeti',
   github: 'https://github.com/AbhayKargeti',
@@ -20,9 +21,9 @@ export const profile = {
 }
 
 export const about = [
-  "I'm a software developer who enjoys working across the stack, from designing backend architecture and REST APIs to building interactive frontend experiences.",
-  "I've worked on enterprise-level applications involving asset lifecycle management, inventory, procurement, financial workflows, and third-party integrations.",
-  "Beyond traditional software development, I'm exploring AI-powered development workflows, LLMs, intelligent automation, and AI agents to understand how the next generation of software will be built.",
+  "I’m a software developer who enjoys working across the stack, from designing backend architecture and REST APIs to building interactive frontend experiences.",
+  "I’ve worked on enterprise-level applications involving asset lifecycle management, inventory, procurement, financial workflows, and third-party integrations.",
+  "Beyond traditional software development, I’ve learned how LLMs, RAG, AI agents, and intelligent automation work, and I keep going deeper to understand how the next generation of software will be built.",
   'I believe in continuous learning, practical problem-solving, and building software that makes a meaningful difference.',
 ]
 
@@ -108,12 +109,13 @@ export const skills = [
     items: ['React', 'TypeScript', 'JavaScript', 'HTML5', 'CSS3', 'Bootstrap'],
   },
   {
-    group: 'Databases & infrastructure',
+    group: 'Databases & Infrastructure',
     scrolling: true,
     items: ['MySQL', 'Oracle SQL', 'Redis', 'Docker', 'Laravel Sail', 'Git', 'GitHub'],
   },
   {
-    group: 'Core concepts',
+    group: 'Core Concepts',
+    plain: true,
     items: [
       'Object-Oriented Programming',
       'Data Structures & Algorithms',
@@ -123,49 +125,22 @@ export const skills = [
     ],
   },
   {
-    group: 'AI & emerging technologies',
-    note: 'Areas of interest and exploration',
+    group: 'AI & LLM Technologies',
+    note: "Technologies I’ve learned",
     items: [
       'Generative AI and LLMs',
-      'Prompt Engineering',
-      'AI-assisted Software Development',
+      'Retrieval-Augmented Generation (RAG)',
       'LLM API Integration',
       'AI Agents and Agentic Workflows',
-      'Retrieval-Augmented Generation (RAG)',
-      'AI-powered Automation',
+      'AI Automation',
     ],
   },
 ]
 
 export const exploring = [
-  'Artificial Intelligence and Generative AI',
   'LLM-powered applications',
-  'AI Agents and Automation',
   'System Design and Scalable Architecture',
   'Advanced Data Structures & Algorithms',
-]
-
-export const uses = [
-  { name: 'MacBook Air', category: 'Laptop', description: 'My development machine.' },
-  {
-    name: 'Visual Studio Code',
-    category: 'Editor',
-    description: 'The editor I write code in.',
-    link: 'https://code.visualstudio.com',
-  },
-  {
-    name: 'Claude Code',
-    category: 'AI',
-    description: 'AI-assisted development in my editor and terminal.',
-    link: 'https://claude.com/claude-code',
-  },
-  {
-    name: 'GitHub Desktop',
-    category: 'Git',
-    description: 'For managing repositories and branches.',
-    link: 'https://desktop.github.com',
-  },
-  { name: 'Brave', category: 'Browser', description: 'My everyday browser.', link: 'https://brave.com' },
 ]
 
 // The Open Source, Blogs, and quote sections appear as soon as these have content.
@@ -189,4 +164,4 @@ export const blogs: {
 export const quote: { text: string; author: string } | null = null
 
 export const connect =
-  "I'm always interested in discussing software engineering, interesting projects, emerging technologies, and opportunities to build something meaningful."
+  "I’m always interested in discussing software engineering, interesting projects, emerging technologies, and opportunities to build something meaningful."

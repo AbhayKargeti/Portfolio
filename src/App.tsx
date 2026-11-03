@@ -1,20 +1,22 @@
-import { useState } from 'react'
-import type { ReactNode } from 'react'
+import { Fragment, useState } from 'react'
+import type { CSSProperties, ReactNode } from 'react'
 import {
   ArrowUpRight,
   ChevronRight,
   CircleDot,
+  Check,
   Clock,
+  Copy,
   FileText,
   GitPullRequest,
   LayoutGrid,
   Mail,
-  MapPin,
   Rows3,
 } from 'lucide-react'
-import { about, blogs, connect, experience, exploring, openSource, profile, projects, quote, skills, uses } from './content'
+import { about, blogs, connect, experience, exploring, newTab, openSource, profile, projects, quote, skills } from './content'
 import GitHubActivity from './GitHubActivity'
 import { LinkedInIcon, TechIcon } from './icons'
+import { tilt, useActiveSection, useNavIndicator, useReveal } from './motion'
 import ThemeToggle from './ThemeToggle'
 
 const sections = [
@@ -22,7 +24,6 @@ const sections = [
   ['experience', 'Experience'],
   ...(openSource.length > 0 ? [['open-source', 'Open Source']] : []),
   ...(blogs.length > 0 ? [['blogs', 'Blogs']] : []),
-  ['uses', 'Uses'],
   ['about', 'About'],
   ['contact', 'Contact'],
 ]
@@ -66,20 +67,87 @@ function Marquee({ items, reverse }: { items: string[]; reverse: boolean }) {
   )
 }
 
-function ChipGroup({ label, note, items, icon }: { label: string; note?: string; items: string[]; icon: boolean }) {
+function Nav() {
+  const active = useActiveSection()
+  const nav = useNavIndicator(active)
+  return (
+    <nav aria-label="Sections" ref={nav}>
+      {sections.map(([id, label]) => (
+        <a key={id} href={`#${id}`} aria-current={active === id ? 'true' : undefined}>
+          {label}
+        </a>
+      ))}
+    </nav>
+  )
+}
+
+function AnimatedName({ name }: { name: string }) {
+  let index = 0
+  return (
+    <h1 aria-label={name}>
+      {name.split(' ').map((word) => (
+        <Fragment key={word}>
+          <span className="word" aria-hidden="true">
+            {[...word].map((letter, position) => (
+              <span className="letter" key={position} style={{ '--i': index++ } as CSSProperties}>
+                {letter}
+              </span>
+            ))}
+          </span>{' '}
+        </Fragment>
+      ))}
+    </h1>
+  )
+}
+
+function CopyEmail() {
+  const [status, setStatus] = useState<'idle' | 'copied' | 'failed'>('idle')
+  const copy = () =>
+    navigator.clipboard
+      .writeText(profile.email)
+      .then(() => setStatus('copied'))
+      .catch(() => setStatus('failed'))
+      .finally(() => setTimeout(() => setStatus('idle'), 2000))
+  const labels = { idle: 'Copy Email', copied: 'Copied', failed: 'Couldn’t Copy' }
+
+  return (
+    <button className="button" type="button" onClick={copy}>
+      {status === 'copied' ? <Check size={16} aria-hidden="true" /> : <Copy size={16} aria-hidden="true" />}
+      <span aria-live="polite">{labels[status]}</span>
+    </button>
+  )
+}
+
+function ChipGroup({
+  label,
+  note,
+  items,
+  icon,
+  plain,
+}: {
+  label: string
+  note?: string
+  items: string[]
+  icon?: boolean
+  plain?: boolean
+}) {
   return (
     <div className="chip-group">
       <h3>
         {label}
         {note && <span>{note}</span>}
       </h3>
-      <ul className="chips">
-        {items.map((item) => (
-          <li key={item}>
-            <Chip name={item} icon={icon} />
-          </li>
-        ))}
-      </ul>
+      {plain ? (
+        <p>{items.join(' · ')}</p>
+      ) : (
+        <ul className="chips">
+          {items.map((item) => (
+            <li key={item}>
+              <Chip name={item} icon={icon} />
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   )
 }
@@ -111,15 +179,18 @@ function Technologies() {
         </div>
       )}
       {concepts.map((skill) => (
-        <ChipGroup key={skill.group} label={skill.group} note={skill.note} items={skill.items} icon={false} />
+        <ChipGroup key={skill.group} label={skill.group} note={skill.note} items={skill.items} icon={false} plain={skill.plain} />
       ))}
     </Section>
   )
 }
 
 export default function App() {
+  useReveal()
+
   return (
     <>
+      <div className="progress" aria-hidden="true" />
       <a className="skip-link" href="#main">
         Skip to content
       </a>
@@ -129,13 +200,7 @@ export default function App() {
           <a className="handle" href="#top">
             {profile.handle}
           </a>
-          <nav aria-label="Sections">
-            {sections.map(([id, label]) => (
-              <a key={id} href={`#${id}`}>
-                {label}
-              </a>
-            ))}
-          </nav>
+          <Nav />
           <ThemeToggle />
         </div>
       </header>
@@ -143,18 +208,18 @@ export default function App() {
       <main id="main">
         <div className="hero" id="top">
           <div className="identity">
-            <img className="avatar" src={profile.avatar} alt={`Portrait of ${profile.name}`} width="136" height="136" />
+            <img className="avatar" src={profile.avatar} alt={`Portrait of ${profile.name}`} width="136" height="136" fetchPriority="high" />
             <div>
-              <h1>{profile.name}</h1>
+              <AnimatedName name={profile.name} />
               <p className="other-titles">{profile.otherTitles.join(' · ')}</p>
               <ul className="socials">
                 <li>
-                  <a href={profile.github} aria-label="GitHub" title="GitHub">
+                  <a href={profile.github} aria-label="GitHub" title="GitHub" {...newTab}>
                     <TechIcon name="GitHub" size={20} />
                   </a>
                 </li>
                 <li>
-                  <a href={profile.linkedin} aria-label="LinkedIn" title="LinkedIn">
+                  <a href={profile.linkedin} aria-label="LinkedIn" title="LinkedIn" {...newTab}>
                     <LinkedInIcon />
                   </a>
                 </li>
@@ -181,18 +246,13 @@ export default function App() {
 
           <p className="focus">{profile.focus}</p>
 
-          <p className="location">
-            <MapPin size={15} aria-hidden="true" />
-            {profile.location}
-          </p>
-
           <div className="actions">
             <a className="button primary" href="#contact">
               Get in Touch
               <ChevronRight size={16} aria-hidden="true" />
             </a>
             {profile.resume && (
-              <a className="button" href={profile.resume}>
+              <a className="button" href={profile.resume} {...newTab}>
                 Resume
                 <FileText size={16} aria-hidden="true" />
               </a>
@@ -205,12 +265,10 @@ export default function App() {
         <Section id="projects" title="Projects">
           <div className="project-grid">
             {projects.map((project) => (
-              <article className="project-card" key={project.name}>
+              <article className="project-card" key={project.name} {...tilt}>
                 <div className={`project-visual ${project.tone}`} aria-hidden="true">
-                  <div className="project-window">
-                    <strong>{project.short}</strong>
-                    <span>{project.tagline}</span>
-                  </div>
+                  <strong>{project.short}</strong>
+                  <span>{project.tagline}</span>
                 </div>
                 <div className="project-body">
                   <h3>{project.name}</h3>
@@ -234,7 +292,7 @@ export default function App() {
                 <div className="project-foot">
                   <span>{project.kind}</span>
                   {project.link && (
-                    <a href={project.link}>
+                    <a href={project.link} {...newTab}>
                       <TechIcon name="GitHub" />
                       GitHub
                     </a>
@@ -274,7 +332,7 @@ export default function App() {
                   </span>
                   <div>
                     <h3>
-                      <a href={item.link}>
+                      <a href={item.link} {...newTab}>
                         {item.name}
                         <ArrowUpRight size={15} aria-hidden="true" />
                       </a>
@@ -301,7 +359,7 @@ export default function App() {
           <Section id="blogs" title="Blogs">
             <div className="blog-list">
               {blogs.map((post) => (
-                <a className="blog-card" href={post.link} key={post.title}>
+                <a className="blog-card" href={post.link} key={post.title} {...newTab}>
                   <div className="blog-meta">
                     <span>{post.date}</span>
                     <span>
@@ -325,28 +383,6 @@ export default function App() {
           </Section>
         )}
 
-        <Section id="uses" title="Uses" action={<span className="section-note">Gear &amp; Setup</span>}>
-          <ul className="uses">
-            {uses.map((item) => (
-              <li key={item.name}>
-                <div className="uses-head">
-                  <h3>
-                    {item.name}
-                    <span>· {item.category}</span>
-                  </h3>
-                  {item.link && (
-                    <a href={item.link} aria-label={`Visit ${item.name}`}>
-                      Visit
-                      <ArrowUpRight size={14} aria-hidden="true" />
-                    </a>
-                  )}
-                </div>
-                <p>{item.description}</p>
-              </li>
-            ))}
-          </ul>
-        </Section>
-
         <Section id="activity" title="GitHub Activity">
           <GitHubActivity />
         </Section>
@@ -357,28 +393,29 @@ export default function App() {
               <p key={paragraph}>{paragraph}</p>
             ))}
           </div>
-          <ChipGroup label="Currently exploring" items={exploring} icon={false} />
+          <ChipGroup label="Currently Exploring" items={exploring} plain />
         </Section>
 
-        <Section id="contact" title="Let's Connect">
+        <Section id="contact" title="Let’s Connect">
           <div className="prose">
             <p>{connect}</p>
           </div>
-          <div className="actions">
+          <div className="actions contact-actions">
             <a className="button primary" href={`mailto:${profile.email}`}>
               <Mail size={16} aria-hidden="true" />
               {profile.email}
             </a>
-            <a className="button" href={profile.linkedin}>
+            <CopyEmail />
+            <a className="button" href={profile.linkedin} {...newTab}>
               <LinkedInIcon size={16} />
               LinkedIn
             </a>
-            <a className="button" href={profile.github}>
+            <a className="button" href={profile.github} {...newTab}>
               <TechIcon name="GitHub" />
               GitHub
             </a>
             {profile.resume && (
-              <a className="button" href={profile.resume}>
+              <a className="button" href={profile.resume} {...newTab}>
                 <FileText size={16} aria-hidden="true" />
                 Resume
               </a>
