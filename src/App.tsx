@@ -17,7 +17,7 @@ import { about, blogs, connect, experience, exploring, newTab, openSource, profi
 import GitHubActivity from './GitHubActivity'
 import { LinkedInIcon, TechIcon } from './icons'
 import LiquidCanvas from './LiquidCanvas'
-import { magnet, tilt, useActiveSection, useLiquidGlass, useHoverType, useNavIndicator, useReveal } from './motion'
+import { magnet, useActiveSection, useLiquidGlass, useHoverType, useNavIndicator, useReveal } from './motion'
 import ThemeToggle from './ThemeToggle'
 
 const sections = [
@@ -156,7 +156,7 @@ function Headline() {
   return (
     <p className="headline">
       <strong>{words(profile.title)}</strong>
-      <span className="sr-only intro-full">{profile.intro}</span>
+      <span className="intro-full">{profile.intro}</span>
       <span className="intro-roll" aria-hidden="true">
         {words(parts[0])}
         <span className="roll-slot word-rise" style={{ '--i': index++ } as CSSProperties}>
@@ -349,18 +349,13 @@ export default function App() {
         <Section id="projects" title="Projects">
           <div className="project-grid">
             {projects.map((project) => (
-              <article className="project-card" key={project.name} {...tilt}>
+              <article className="project-card" key={project.name}>
                 <div className={`project-visual ${project.tone}`} aria-hidden="true">
-                  <LiquidCanvas className="panel-liquid" />
-                  <strong>
-                    <HoverType text={project.short} />
-                  </strong>
+                  <strong>{project.short}</strong>
                   <span>{project.tagline}</span>
                 </div>
                 <div className="project-body">
-                  <h3>
-                    <HoverType text={project.name} />
-                  </h3>
+                  <h3>{project.name}</h3>
                   <p>{project.summary}</p>
                   {project.areas.length > 0 && (
                     <ul className="areas">

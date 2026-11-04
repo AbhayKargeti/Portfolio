@@ -73,19 +73,6 @@ export function useNavIndicator(active: string) {
   return nav
 }
 
-export const tilt = {
-  onPointerMove({ currentTarget, clientX, clientY }: PointerEvent<HTMLElement>) {
-    const { left, top, width, height } = currentTarget.getBoundingClientRect()
-    currentTarget.style.setProperty('--ry', `${((clientX - left) / width - 0.5) * 4}deg`)
-    currentTarget.style.setProperty('--rx', `${(0.5 - (clientY - top) / height) * 4}deg`)
-  },
-  onPointerLeave({ currentTarget }: PointerEvent<HTMLElement>) {
-    currentTarget.style.removeProperty('--rx')
-    currentTarget.style.removeProperty('--ry')
-  },
-}
-
-
 export const magnet = {
   onPointerMove({ target, clientX, clientY }: PointerEvent<HTMLElement>) {
     const button = (target as Element).closest<HTMLElement>('.button')
