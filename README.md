@@ -13,7 +13,7 @@ My personal site. I'm a fullstack AI engineer.
 
 ## Tech stack
 
-React, TypeScript, Vite, and CSS I wrote by hand. I wrote the animations and the WebGL shader myself, without any animation or 3D library.
+React, TypeScript, Vite, and plain CSS. The animations and WebGL shader are custom, with no animation or 3D libraries.
 
 ## Run it locally
 
