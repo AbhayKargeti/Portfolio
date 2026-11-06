@@ -1,21 +1,29 @@
-MIT License
+Copyright (c) 2026 Abhay Kargeti. All rights reserved.
 
-Copyright (c) 2026 Abhay Kargeti
+This repository and everything in it, including the source code, design,
+layout, shaders, animations, text, images, and the name and likeness of
+Abhay Kargeti, are the exclusive property of the copyright holder.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+The repository is public only so that it can be viewed. You may read the code
+and link to it. No other right is granted. Without prior written permission
+from the copyright holder, you may not:
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+  1. copy, reproduce, or republish any part of it, in whole or in part;
+  2. modify it or create derivative works based on it;
+  3. deploy, host, or use it, or any substantially similar version of it, as
+     your own website or in any other project, personal or commercial;
+  4. distribute, sublicense, sell, or otherwise make it available to others;
+  5. use it, in whole or in part, to train or fine-tune machine learning
+     models, or as input to tools that generate derivative code or designs.
+
+Forking this repository on GitHub, as allowed by the GitHub Terms of Service,
+grants no rights beyond viewing the fork.
+
+Third-party packages listed in package.json remain under their own licenses.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+IMPLIED. IN NO EVENT SHALL THE COPYRIGHT HOLDER BE LIABLE FOR ANY CLAIM,
+DAMAGES, OR OTHER LIABILITY ARISING FROM THE SOFTWARE OR ITS USE.
+
+For permission requests, contact the copyright holder through the links at
+https://github.com/AbhayKargeti.

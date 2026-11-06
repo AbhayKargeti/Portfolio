@@ -36,4 +36,6 @@ The text, links, experience, and projects are in `src/content.ts`.
 
 ## License
 
-[MIT](LICENSE)
+Copyright (c) 2026 Abhay Kargeti. All rights reserved.
+
+This repository is public for viewing only. You may not copy, modify, deploy, or reuse any part of the code, design, or content without written permission. See [LICENSE](LICENSE).

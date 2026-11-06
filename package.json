@@ -2,6 +2,8 @@
   "name": "abhay-kargeti-site",
   "private": true,
   "version": "1.0.0",
+  "license": "UNLICENSED",
+  "author": "Abhay Kargeti",
   "type": "module",
   "packageManager": "bun@1.4.4",
   "scripts": {
