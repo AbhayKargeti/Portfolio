@@ -1,6 +1,6 @@
 # Abhay Kargeti
 
-My personal site. I'm a fullstack AI engineer, and I designed and built this from scratch: the layout, the shader, the motion, all of it.
+My personal site. I'm a fullstack AI engineer.
 
 ## Features
 
