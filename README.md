@@ -1,6 +1,6 @@
 # Abhay Kargeti
 
-Personal portfolio of Abhay Kargeti, a Fullstack AI Engineer who builds web applications, enterprise software, and backend systems.
+My personal site. I'm a fullstack AI engineer, and I designed and built this from scratch: the layout, the shader, the motion, all of it.
 
 ## Features
 
@@ -13,7 +13,7 @@ Personal portfolio of Abhay Kargeti, a Fullstack AI Engineer who builds web appl
 
 ## Tech stack
 
-React, TypeScript, Vite, and hand-written CSS. The animations and WebGL shader use no animation or 3D library.
+React, TypeScript, Vite, and CSS I wrote by hand. I wrote the animations and the WebGL shader myself, without any animation or 3D library.
 
 ## Run it locally
 
@@ -38,4 +38,4 @@ The text, links, experience, and projects are in `src/content.ts`.
 
 Copyright (c) 2026 Abhay Kargeti. All rights reserved.
 
-This repository is public for viewing only. You may not copy, modify, deploy, or reuse any part of the code, design, or content without written permission. See [LICENSE](LICENSE).
+The code is public so you can see how I built it. Please don't copy, modify, deploy, or reuse any part of the code, design, or content without asking me first. See [LICENSE](LICENSE).
